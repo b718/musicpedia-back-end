@@ -4,8 +4,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.concurrent.CompletableFuture;
-
+import java.util.Set;
 import org.json.JSONObject;
 
 /* 
@@ -22,7 +21,15 @@ public class WikiPediaPortion {
         this.ArtistName = this.ArtistName.replace(" ", "_");
     }
 
-    private void formatData() {
+    private void parseData(String responseBody) {
+        JSONObject ArtistObject = new JSONObject(responseBody);
+        Set<String> ArtistKeySet = ArtistObject.getJSONObject("query").getJSONObject("pages").keySet();
+
+        String HtmlData = ArtistObject.getJSONObject("query").getJSONObject("pages")
+                .getJSONObject(ArtistKeySet.iterator().next())
+                .getString("extract");
+
+        System.out.println(HtmlData);
 
     }
 
@@ -35,11 +42,10 @@ public class WikiPediaPortion {
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(apiUrl)).build();
 
         try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            // JSONObject obj = new JSONObject(response.body());
-            System.out.println(response);
-            System.out.println(response.body());
-            // System.out.println(obj);
+            String result = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                    .thenApply(HttpResponse::body).join();
+
+            parseData(result);
 
         } catch (Exception e) {
             System.out.println("Error" + e);
