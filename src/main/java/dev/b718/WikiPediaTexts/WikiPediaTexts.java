@@ -1,4 +1,4 @@
-package dev.b718.WikiPediaPortion;
+package dev.b718.WikiPediaTexts;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -17,10 +17,11 @@ import org.jsoup.select.Elements;
 /* 
 ! The goal of this is to get a bio of the artist from Wikipedia
  */
-public class WikiPediaPortion {
+public class WikiPediaTexts {
     private String ArtistName;
+    private final String URI_BASE = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&titles=";
 
-    public WikiPediaPortion(String artistName) {
+    public WikiPediaTexts(String artistName) {
         this.ArtistName = artistName;
     }
 
@@ -59,8 +60,7 @@ public class WikiPediaPortion {
 
     public JsonObject getInformationOnArtist() {
         this.handleArtistName();
-        String apiUrl = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&titles="
-                + this.ArtistName;
+        String apiUrl = URI_BASE + this.ArtistName;
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(apiUrl)).build();
