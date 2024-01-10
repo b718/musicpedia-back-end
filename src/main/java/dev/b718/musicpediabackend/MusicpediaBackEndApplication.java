@@ -12,8 +12,8 @@ public class MusicpediaBackEndApplication {
 		SpringApplication.run(MusicpediaBackEndApplication.class, args);
 		System.out.println("Musicpedia Back End Application Started");
 
-		WikiPediaPortion test = new WikiPediaPortion("Kanye West");
-		test.getInformationOnArtist();
+		WikiPediaPortion test = new WikiPediaPortion("ASAP Rocky");
+		System.out.println(test.getInformationOnArtist());
 
 	}
 

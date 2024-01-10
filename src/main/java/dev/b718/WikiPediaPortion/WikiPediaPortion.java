@@ -7,6 +7,13 @@ import java.net.http.HttpResponse;
 import java.util.Set;
 import org.json.JSONObject;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 /* 
 ! The goal of this is to get a bio of the artist from Wikipedia
  */
@@ -21,7 +28,7 @@ public class WikiPediaPortion {
         this.ArtistName = this.ArtistName.replace(" ", "_");
     }
 
-    private void parseData(String responseBody) {
+    private String parseData(String responseBody) {
         JSONObject ArtistObject = new JSONObject(responseBody);
         Set<String> ArtistKeySet = ArtistObject.getJSONObject("query").getJSONObject("pages").keySet();
 
@@ -29,11 +36,28 @@ public class WikiPediaPortion {
                 .getJSONObject(ArtistKeySet.iterator().next())
                 .getString("extract");
 
-        System.out.println(HtmlData);
-
+        return HtmlData;
     }
 
-    public void getInformationOnArtist() {
+    public static JsonObject convertHtmlToJson(String html) {
+        Document doc = Jsoup.parse(html);
+        JsonObject result = new JsonObject();
+        JsonArray paragraphs = new JsonArray();
+
+        Elements pTags = doc.select("p");
+        for (Element pTag : pTags) {
+            String text = pTag.text();
+            if (text.length() > 0) {
+                paragraphs.add(text);
+
+            }
+        }
+
+        result.add("textOnArist", paragraphs);
+        return result;
+    }
+
+    public JsonObject getInformationOnArtist() {
         this.handleArtistName();
         String apiUrl = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&titles="
                 + this.ArtistName;
@@ -45,10 +69,13 @@ public class WikiPediaPortion {
             String result = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                     .thenApply(HttpResponse::body).join();
 
-            parseData(result);
+            result = parseData(result);
 
+            JsonObject WikipediaJSON = convertHtmlToJson(result);
+            return WikipediaJSON;
         } catch (Exception e) {
             System.out.println("Error" + e);
+            return new JsonObject();
         }
 
     }
