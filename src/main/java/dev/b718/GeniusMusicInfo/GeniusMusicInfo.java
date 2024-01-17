@@ -43,7 +43,7 @@ public class GeniusMusicInfo {
 
     private void cleanData() {
         JSONArray hits = this.ArtistData.getJSONArray("hits");
-        System.out.println(hits.getJSONObject(0));
+        System.out.println(hits.getJSONObject(0).getJSONObject("result").toString(4));
     }
 
     public JSONObject showArtistData() {
