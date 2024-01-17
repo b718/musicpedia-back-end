@@ -15,9 +15,9 @@ public class MusicpediaBackEndApplication {
 
 		WikiPediaTexts test = new WikiPediaTexts("ASAP Rocky");
 		GeniusMusicInfo GMI = new GeniusMusicInfo("ASAP Rocky");
-		System.out.println(test.getInformationOnArtist());
+		System.out.println(test.getInformationOnArtist().toString(4));
 		System.out.println("");
-		System.out.println(GMI.showArtistData());
+		GMI.showArtistData();
 
 	}
 

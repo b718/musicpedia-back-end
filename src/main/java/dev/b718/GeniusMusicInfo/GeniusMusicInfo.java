@@ -2,6 +2,7 @@ package dev.b718.GeniusMusicInfo;
 
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URI;
@@ -12,12 +13,14 @@ import java.net.http.HttpResponse;
 public class GeniusMusicInfo {
     private Map<String, String> env;
     private String ArtistName;
+    private JSONObject ArtistData;
 
     private final String SEARCH_URI = "https://api.genius.com/search?q=";
     private final String AUTH_URI = "&access_token=";
 
     public GeniusMusicInfo(String artistName) {
         this.ArtistName = handleArtistName(artistName);
+        this.ArtistData = new JSONObject();
         env = System.getenv();
     }
 
@@ -25,7 +28,7 @@ public class GeniusMusicInfo {
         return artistName.replace(" ", "_");
     }
 
-    private JSONObject fetchAristData() {
+    private void fetchAristData() {
         String fetchingURL = SEARCH_URI + this.ArtistName + AUTH_URI + env.get("GENIUS");
 
         HttpClient client = HttpClient.newHttpClient();
@@ -35,11 +38,18 @@ public class GeniusMusicInfo {
                 .join();
 
         JSONObject responseJson = new JSONObject(response).getJSONObject("response");
-        return responseJson;
+        this.ArtistData = responseJson;
+    }
+
+    private void cleanData() {
+        JSONArray hits = this.ArtistData.getJSONArray("hits");
+        System.out.println(hits.getJSONObject(0));
     }
 
     public JSONObject showArtistData() {
-        return this.fetchAristData();
+        this.fetchAristData();
+        this.cleanData();
+        return this.ArtistData;
     }
 
 }

@@ -8,7 +8,6 @@ import java.util.Set;
 import org.json.JSONObject;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -40,9 +39,9 @@ public class WikiPediaTexts {
         return HtmlData;
     }
 
-    public static JsonObject convertHtmlToJson(String html) {
+    public static JSONObject convertHtmlToJson(String html) {
         Document doc = Jsoup.parse(html);
-        JsonObject result = new JsonObject();
+        JSONObject result = new JSONObject();
         JsonArray paragraphs = new JsonArray();
 
         Elements pTags = doc.select("p");
@@ -54,11 +53,11 @@ public class WikiPediaTexts {
             }
         }
 
-        result.add("textOnArist", paragraphs);
+        result.append("textOnArist", paragraphs);
         return result;
     }
 
-    public JsonObject getInformationOnArtist() {
+    public JSONObject getInformationOnArtist() {
         this.handleArtistName();
         String apiUrl = URI_BASE + this.ArtistName;
 
@@ -71,11 +70,11 @@ public class WikiPediaTexts {
 
             result = parseData(result);
 
-            JsonObject WikipediaJSON = convertHtmlToJson(result);
+            JSONObject WikipediaJSON = convertHtmlToJson(result);
             return WikipediaJSON;
         } catch (Exception e) {
             System.out.println("Error" + e);
-            return new JsonObject();
+            return new JSONObject();
         }
 
     }
