@@ -64,18 +64,13 @@ public class WikiPediaTexts {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(apiUrl)).build();
 
-        try {
-            String result = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                    .thenApply(HttpResponse::body).join();
+        String result = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply(HttpResponse::body).join();
 
-            result = parseData(result);
+        result = parseData(result);
+        JSONObject WikipediaJSON = convertHtmlToJson(result);
 
-            JSONObject WikipediaJSON = convertHtmlToJson(result);
-            return WikipediaJSON;
-        } catch (Exception e) {
-            System.out.println("Error" + e);
-            return new JSONObject();
-        }
+        return WikipediaJSON;
 
     }
 }
